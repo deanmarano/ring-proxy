@@ -18,8 +18,10 @@
   [^java.io.InputStream is len]
   (with-open [rdr is]
     (let [buf (byte-array len)]
-      (.read rdr buf)
-      buf)))
+      (loop [bytes-read (.read rdr buf)]
+        (if (= bytes-read -1)
+          buf
+          (recur (.read rdr buf)))))))
 
 (defn wrap-proxy
   "Proxies requests to proxied-path, a local URI, to the remote URI at
